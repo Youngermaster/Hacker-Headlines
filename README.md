@@ -73,19 +73,15 @@ The app is straightforward to use. Upon launching, you'll see a list of headline
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-1. Fork the
-
-Project 2. Create your feature branch (`git checkout -b feature/YourFeature`) 3. Commit your changes (`git commit -m 'Add some YourFeature'`) 4. Push to the branch (`git push origin feature/YourFeature`) 5. Open a Pull Request
+1. Fork the Project.
+2. Create your feature branch (`git checkout -b feature/YourFeature`).
+3. Commit your changes (`git commit -m 'Add some YourFeature'`).
+4. Push to the branch (`git push origin feature/YourFeature`),
+5. Open a Pull Request.
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## Contact
-
-Your Name - [@your_twitter](https://twitter.com/your_twitter)
-
-Project Link: [https://github.com/yourusername/hacker-headlines](https://github.com/yourusername/hacker-headlines)
+Distributed under the Apache License. See `LICENSE` for more information.
 
 ## Acknowledgments
 
