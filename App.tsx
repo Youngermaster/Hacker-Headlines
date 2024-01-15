@@ -1,59 +1,45 @@
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
+  useColorScheme,
 } from 'react-native';
+import axios from 'axios';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const [stories, setStories] = useState([]);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  useEffect(() => {
+    const fetchStories = async () => {
+      try {
+        const {data: storyIds} = await axios.get(
+          'https://hacker-news.firebaseio.com/v0/topstories.json',
+        );
+        const storyPromises = storyIds
+          .slice(0, 10)
+          .map((id: any) =>
+            axios.get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`),
+          );
+        const stories = await Promise.all(storyPromises);
+        setStories(stories.map(story => story.data));
+      } catch (error) {
+        console.error('Error fetching stories:', error);
+      }
+    };
+
+    fetchStories();
+  }, []);
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -65,31 +51,33 @@ function App(): React.JSX.Element {
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
+        {stories.map((story, index) => (
+          <View key={story.id} style={styles.storyContainer}>
+            <Text style={styles.storyTitle}>
+              {index + 1}. {story.title}
+            </Text>
+            <Text style={styles.storyAuthor}>By {story.by}</Text>
+          </View>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  storyContainer: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#cccccc',
+  },
+  storyTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  storyAuthor: {
+    fontSize: 14,
+    color: '#555555',
+  },
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,
